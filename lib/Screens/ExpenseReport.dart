@@ -148,7 +148,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
       });
       return;
     } else {
-      grpby = null;
+     Navigator.pop(context);
     }
   }
 
@@ -692,7 +692,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
                               return DropdownMenuItem<String>(
                                 value: dropDownStringItem,
                                 child: Container(
-                                  padding: const EdgeInsets.all(2),
+                                  padding: const EdgeInsets.all(4),
                                   child: Text(
                                     dropDownStringItem,
                                     style: TextStyle(
@@ -719,7 +719,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
                               child: Text(
                                 'Select ',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
