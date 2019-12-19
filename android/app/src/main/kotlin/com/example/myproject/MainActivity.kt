@@ -1,4 +1,4 @@
-package com.example.myproject
+package com.jivo.jivosales
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
