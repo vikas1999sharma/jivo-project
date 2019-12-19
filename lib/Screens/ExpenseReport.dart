@@ -148,7 +148,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
       });
       return;
     } else {
-     Navigator.pop(context);
+    
     }
   }
 
@@ -439,8 +439,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
                 scrollDirection: Axis.vertical,
                 itemCount: glbExpenseList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: Column(
+                  return Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Row(
@@ -513,9 +512,9 @@ class _ExpenseReportState extends State<ExpenseReport> {
                           ],
                         ),
                       ],
-                    ),
-                  );
-                }));
+                    
+                  
+    );}));
   }
 
   String showSelectedValue(Expense expense) {
