@@ -1,4 +1,4 @@
-package com.jivo.jivosales
+package com.jivowellness.jivosales
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
