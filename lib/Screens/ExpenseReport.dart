@@ -7,6 +7,7 @@ import 'package:myproject/ReportModel/Expense.dart';
 import 'package:myproject/ReportModel/ProfitandLoss.dart';
 import 'package:myproject/ReportModel/WhereClause.dart';
 import 'package:myproject/ReportModel/fullReport.dart';
+import 'package:myproject/Screens/RealiseReport.dart';
 import 'package:myproject/utils/databaseHelper.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +41,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
     _controller = ScrollController();
 
     super.initState();
-    // costReport(id, fromDate, toDate);
+    costReport(id, fromDate, toDate);
     _asynMethod();
   }
 
@@ -92,12 +93,13 @@ class _ExpenseReportState extends State<ExpenseReport> {
   String getExpenseUrl = "http://122.160.78.189:85/SapExpense/getExpense";
 
   List<Expense> glbExpenseList = new List<Expense>();
-  //api calling//
+
   Future<List<http.Response>> getExpenseReport(expenseReport) async {
     var body = json.encode(expenseReport);
     var response = await http.post(getExpenseUrl,
         headers: {"Content-Type": "application/json"}, body: body);
     debugPrint(body);
+
     if (response.statusCode == 200) {
       final parsed =
           json.decode(response.body.toString()).cast<Map<String, dynamic>>();
@@ -119,7 +121,6 @@ class _ExpenseReportState extends State<ExpenseReport> {
           expense.state = "Expense";
           expense.amount = sumAmount.toString();
 
-          // glbExpenseList.remove(expense);
           glbExpenseList.removeWhere((expense) => expense != null);
           glbExpenseList.add(expense);
         });
@@ -148,7 +149,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
       });
       return;
     } else {
-    
+      _asynMethod();
     }
   }
 
@@ -262,6 +263,136 @@ class _ExpenseReportState extends State<ExpenseReport> {
     return cost;
   }
 
+  Widget buildHeaders() {
+    return Card(
+      child: Container(
+        color: Colors.indigo[900],
+        child: Row(
+            //  mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: new Container(
+                    padding: const EdgeInsets.all(6),
+                    width: 100.0,
+                    child: new Text(
+                      "Total Sales (Rs)",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.white),
+                    )),
+              ),
+              VerticalDivider(
+                color: Colors.black,
+              ),
+              Expanded(
+                child: new Container(
+                    // padding: const EdgeInsets.all(6),
+                    width: 160.0,
+                    child: new Text(
+                      "Total Sales (Ltrs)",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.white),
+                    )),
+              ),
+              VerticalDivider(
+                color: Colors.black,
+              ),
+              Expanded(
+                child: new Container(
+                    //padding: const EdgeInsets.all(18),
+
+                    width: 100.0,
+                    child: new Text(
+                      grpby == null ? "" : grpby,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Colors.white),
+                    )),
+              ),
+            ]),
+      ),
+    );
+  }
+
+  Widget buildList() {
+    return Container(
+        child: glbExpenseList.isEmpty
+            ? Center(child: Text('Empty', style: TextStyle(color: Colors.red)))
+            : new ListView.builder(
+                shrinkWrap: true,
+                controller: _controller,
+                scrollDirection: Axis.vertical,
+                itemCount: glbExpenseList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return new Card(
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
+                              if (_formKey.currentState.validate()) {
+                                Expense expns = glbExpenseList[index];
+                                setSelectedValue(expns);
+                              }
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.all(2),
+                                width: 120,
+                                child: new Text(
+                                  formatter.format(double.parse(double.parse(
+                                          glbExpenseList[index]
+                                              .amount
+                                              .toString())
+                                      .toString())),
+                                  style: TextStyle(color: Colors.lightBlue),
+                                )),
+                          ),
+                        ),
+                        VerticalDivider(
+                          color: Colors.black,
+                        ),
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
+                              if (_formKey.currentState.validate()) {
+                                Expense expns = glbExpenseList[index];
+                                setSelectedValue(expns);
+                              }
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.all(0),
+                                width: 160,
+                                child: new Text(
+                                    formatter.format(double.parse(
+                                        div(glbExpenseList[index].amount)
+                                            .toString())),
+                                    style: TextStyle(color: Colors.lightBlue))),
+                          ),
+                        ),
+                        VerticalDivider(
+                          color: Colors.black,
+                        ),
+                        Flexible(
+                          child: Container(
+                            //  padding: const EdgeInsets.all(15),
+                            width: 150,
+                            child: new Text(
+                              showSelectedValue(glbExpenseList[index]),
+                              maxLines: 8,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }));
+  }
+
   Widget _buildBottomPicker(Widget picker) {
     return Container(
       height: _kPickerSheetHeight,
@@ -292,6 +423,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
           builder: (BuildContext context) {
             return _buildBottomPicker(
               CupertinoDatePicker(
+                backgroundColor: Colors.green,
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: fromdate,
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -305,24 +437,24 @@ class _ExpenseReportState extends State<ExpenseReport> {
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Flexible(
           child: Container(
-            padding: const EdgeInsets.all(1),
+            padding: const EdgeInsets.all(5),
             child: Text(
-              'To Date',
+              'From Date',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(7),
+          padding: const EdgeInsets.all(5),
         ),
         Flexible(
           child: Container(
             padding: const EdgeInsets.all(0),
             child: Text(
-              DateFormat.yMMMd().format(fromdate),
+              DateFormat.yMd().format(fromdate),
               style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black,
+                fontSize: 13,
+                color: Colors.blue,
               ),
             ),
           ),
@@ -339,6 +471,7 @@ class _ExpenseReportState extends State<ExpenseReport> {
           builder: (BuildContext context) {
             return _buildBottomPicker(
               CupertinoDatePicker(
+                backgroundColor: Colors.green,
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: todate,
                 onDateTimeChanged: (DateTime newDateTime) {
@@ -352,9 +485,9 @@ class _ExpenseReportState extends State<ExpenseReport> {
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Flexible(
           child: Container(
-            padding: const EdgeInsets.all(1),
+            padding: const EdgeInsets.all(5),
             child: Text(
-              'From Date',
+              'To Date',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -363,16 +496,16 @@ class _ExpenseReportState extends State<ExpenseReport> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(7),
+          padding: const EdgeInsets.all(5),
         ),
         Flexible(
           child: Container(
             padding: const EdgeInsets.all(0),
             child: Text(
-              DateFormat.yMMMd().format(todate),
+              DateFormat.yMd().format(todate),
               style: const TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
+                fontSize: 13.0,
+                color: Colors.blue,
               ),
             ),
           ),
@@ -439,7 +572,8 @@ class _ExpenseReportState extends State<ExpenseReport> {
                 scrollDirection: Axis.vertical,
                 itemCount: glbExpenseList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Column(
+                  return Card(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Row(
@@ -470,7 +604,6 @@ class _ExpenseReportState extends State<ExpenseReport> {
                             ),
                           ],
                         ),
-                        Divider(),
                         new Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -490,7 +623,6 @@ class _ExpenseReportState extends State<ExpenseReport> {
                                 )),
                           ],
                         ),
-                        Divider(),
                         new Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -511,10 +643,13 @@ class _ExpenseReportState extends State<ExpenseReport> {
                             )
                           ],
                         ),
+                        Divider(
+                          color: Colors.black,
+                        )
                       ],
-                    
-                  
-    );}));
+                    ),
+                  );
+                }));
   }
 
   String showSelectedValue(Expense expense) {
@@ -595,143 +730,171 @@ class _ExpenseReportState extends State<ExpenseReport> {
                       child: Column(children: <Widget>[
                 Card(
                   child: Container(
-                    child: Column(
+                    padding: const EdgeInsets.all(5),
+                    color: Colors.indigo[900],
+                    child: new Row(
                       children: <Widget>[
-                        Container(
-                          color: Colors.indigo[900],
-                          child: new Row(
-                            children: <Widget>[
-                              Card(
-                                  color: Colors.indigo[900],
-                                  child: Text(
-                                    "Select Date",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        Divider(),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              child: _buildFromDatePicker(context),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                            ),
-                            Flexible(
-                              child: _buildtoDatePicker(context),
-                            )
-                          ],
-                        ),
-                        Divider(),
+                        Card(
+                            color: Colors.indigo[900],
+                            child: Text(
+                              "Select Date",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            )),
                       ],
                     ),
                   ),
                 ),
-                new Row(
-                  children: <Widget>[
-                    Container(
-                        padding: const EdgeInsets.all(4),
-                        child: buildSubmitButton()),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        "Total Sales (Ltrs.)",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                Card(
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Flexible(
+                        child: _buildFromDatePicker(context),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      child: Text(
-                        formatter.format(double.parse(totalsaleRs.toString())),
-                      ),
-                    )
-                  ],
-                ),
-                Divider(),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                        padding: const EdgeInsets.all(4),
-                        child: new Text(
-                          "Realise Report",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        )),
-                    Container(
+                      Padding(
                         padding: const EdgeInsets.all(2),
-                        child: buildBackButton())
-                  ],
+                      ),
+                      Flexible(
+                        child: _buildtoDatePicker(context),
+                      )
+                    ],
+                  ),
                 ),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Flexible(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButtonFormField<String>(
-                            items: groupByList.map((String dropDownStringItem) {
-                              return DropdownMenuItem<String>(
-                                value: dropDownStringItem,
-                                child: Container(
+                Card(
+                  child: new Row(
+                    children: <Widget>[
+                      Container(
+                          padding: const EdgeInsets.all(5),
+                          child: buildSubmitButton()),
+                    ],
+                  ),
+                ),
+                Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(
+                          "Total Sales (Ltrs.)",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(12),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RealiseReport()),
+                            );
+                          },
+                          child: Text(
+                            formatter
+                                .format(double.parse(totalsaleRs.toString())),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                                fontSize: 15),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Card(
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                          padding: const EdgeInsets.all(5),
+                          child: new Text(
+                            "Realise Report",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          )),
+                      Container(
+                          padding: const EdgeInsets.all(2),
+                          child: buildBackButton())
+                    ],
+                  ),
+                ),
+                Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Flexible(
+                          flex: 1,
+                          child: DropdownButtonHideUnderline(
+                            child: Container(
+                              color: Colors.indigo[900],
+                              padding: const EdgeInsets.all(0),
+                              child: DropdownButtonFormField<String>(
+                                iconEnabledColor: Colors.white,
+                                items: groupByList
+                                    .map((String dropDownStringItem) {
+                                  return DropdownMenuItem<String>(
+                                    value: dropDownStringItem,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(
+                                        dropDownStringItem,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (String newValueSelected) {
+                                  setState(() {
+                                    selectedGroupByValue = newValueSelected;
+                                  });
+                                },
+                                validator: (String value) {
+                                  if (value?.isEmpty ?? true) {
+                                    return 'Please Select group by first!';
+                                  }
+                                  return null;
+                                },
+                                value: selectedGroupByValue,
+                                hint: Container(
                                   padding: const EdgeInsets.all(4),
                                   child: Text(
-                                    dropDownStringItem,
+                                    '--Select ',
                                     style: TextStyle(
-                                      fontSize: 14,
-                                    ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String newValueSelected) {
-                              setState(() {
-                                selectedGroupByValue = newValueSelected;
-                              });
-                            },
-                            validator: (String value) {
-                              if (value?.isEmpty ?? true) {
-                                return 'Please Select group by first!';
-                              }
-                              return null;
-                            },
-                            value: selectedGroupByValue,
-                            hint: Container(
-                              padding: const EdgeInsets.all(4),
-                              child: Text(
-                                'Select ',
-                                style: TextStyle(
-                                  fontSize: 15,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                    ],
+                  ),
+                ),
+                new Column(
+                  children: <Widget>[
+                    buildHeaders(),
+                    Divider(),
+                    buildList(),
+                    Divider()
                   ],
                 ),
-                Divider(),
-                new Column(
-                  children: <Widget>[buildItemList()],
-                )
               ]))),
             )));
   }

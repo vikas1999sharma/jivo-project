@@ -10,10 +10,12 @@ import "package:shared_preferences/shared_preferences.dart";
 import 'package:http/http.dart' as http;
 import 'LimitUpdation.dart';
 import 'PartiesName.dart';
+import 'RealiseReport.dart';
 import 'SapDashboard.dart';
 
 JivoOutput jivoOutput;
 const String userId = '';
+
 class HomeScreen extends StatefulWidget {
   final String data;
 
@@ -132,9 +134,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => SapDashboard()),
                   );
                 },
-              ),
-             /*  ListTile(
-                title: Text('Reports ',
+              ),/* 
+                  ListTile(
+                title: Text('Practise',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Prac()),
+                  );
+                },
+              ),      */
+              ListTile(
+                title: Text('Sales Reports ',
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -145,21 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => RealiseReport()),
-                  );
-                },
-              ), */
-              ListTile(
-                title: Text('Sales Order ',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
-                trailing: Icon(Icons.arrow_forward_ios),
-                //leading: const Icon(Icons.navigate_next),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SalesDashboard()),
                   );
                 },
               ),
@@ -178,6 +179,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
+              ListTile(
+                title: Text('Sales Order ',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                trailing: Icon(Icons.arrow_forward_ios),
+                //leading: const Icon(Icons.navigate_next),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SalesDashboard()),
+                  );
+                },
+              ),
+             
               ListTile(
                 title: Text('Log Out',
                     style: TextStyle(
@@ -274,12 +291,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(
                                                       32.0),
-                                                  child: Text(
-                                                      "ERROR,Tap to Retry !"),
+                                                  child: Text("Try Again!"),
                                                 ),
                                                 onTap: () => setState(() {}))
                                         : CircularProgressIndicator();
-                                  }) 
+                                  })
                             ],
                           )),
                           Padding(
@@ -303,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 )),
                                 Padding(padding: const EdgeInsets.all(2)),
-                               new FutureBuilder<JivoOutput>(
+                                new FutureBuilder<JivoOutput>(
                                     future: getCustomerTotalOutstanding(),
                                     builder: (context, snapShot) {
                                       return (snapShot.connectionState ==
@@ -325,12 +341,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     padding:
                                                         const EdgeInsets.all(
                                                             32.0),
-                                                    child: Text(
-                                                        "ERROR OCCURRED, Tap to retry !"),
+                                                    child: Text("Try Again!"),
                                                   ),
                                                   onTap: () => setState(() {}))
                                           : CircularProgressIndicator();
-                                    }) 
+                                    })
                               ],
                             ),
                           ),
@@ -358,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(5),
                                   ),
-                                   new FutureBuilder<JivoOutput>(
+                                  new FutureBuilder<JivoOutput>(
                                       future: getCustomerTotalOutstanding(),
                                       builder: (context, snapShot) {
                                         return (snapShot.connectionState ==
@@ -379,13 +394,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               32.0),
-                                                      child: Text(
-                                                          "ERROR OCCURRED, Tap to retry !"),
+                                                      child: Text("Try Again!"),
                                                     ),
                                                     onTap: () =>
                                                         setState(() {}))
                                             : CircularProgressIndicator();
-                                      }) 
+                                      })
                                 ]),
                           ),
                           Padding(
@@ -433,13 +447,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               32.0),
-                                                      child: Text(
-                                                          "ERROR OCCURRED, Tap to retry !"),
+                                                      child: Text("Try Again!"),
                                                     ),
                                                     onTap: () =>
                                                         setState(() {}))
                                             : CircularProgressIndicator();
-                                      }), 
+                                      }),
                                 ]),
                           )
                         ])))

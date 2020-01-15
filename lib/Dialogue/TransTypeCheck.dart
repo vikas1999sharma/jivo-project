@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:myproject/SapModel/TransType.dart';
 
-
 class TranstypeCheck extends StatefulWidget {
   TranstypeCheck(
       {this.transTypeList, this.onItemsSelected, this.onDialogueCancelled});

@@ -41,7 +41,8 @@ dev_dependencies:
   path_provider: ^1.5.1
   flutter_cupertino_date_picker: ^1.0.12
   scoped_model: ^1.0.1
-  simple_autocomplete_formfield: ^0.2.4    
+  simple_autocomplete_formfield: ^0.2.4  
+  flutter_multiselect: ^0.4.0  
 
 
 

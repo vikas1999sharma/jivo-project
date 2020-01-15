@@ -23,7 +23,7 @@ class Expense {
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
       account: json['account'],
-      amount: json['amount'],
+      amount: json['amount'].toString(),
       branch: json['branch'],
       budget: json['budget'],
       category: json['category'],

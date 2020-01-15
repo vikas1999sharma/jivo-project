@@ -22,6 +22,25 @@ class SapBackRight extends StatefulWidget {
 
 class _SapBackRightState extends State<SapBackRight> {
   DateTime selectedDate = DateTime.now();
+  String _mySelection;
+
+  final String sapUserUrl = "http://122.160.78.189:85/api/Sap/getSAPUsers";
+
+  List data = List(); //edited line
+
+  Future<String> getSWData() async {
+    var res = await http.get(Uri.encodeFull(sapUserUrl),
+        headers: {"Accept": "application/json"});
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      data = resBody;
+    });
+
+    print(resBody);
+
+    return "Sucess";
+  }
 
   bool get hasFocus => false;
 
@@ -35,39 +54,6 @@ class _SapBackRightState extends State<SapBackRight> {
   String rights;
 
   String selecteduserId;
-
-  var getSAPUsersData = [
-    "ACC001",
-    "ACC002",
-    "ACC003",
-    "ACC004",
-    "ADM001",
-    "ADM002",
-    "ADM003",
-    "adm004",
-    "adm005",
-    "adm006",
-    "adm007",
-    "adm008",
-    "ADM05",
-    "admin",
-    "AlertSvc",
-    "Audit",
-    "Audit1",
-    "B1i",
-    "inder001",
-    "LOG001",
-    "LOG002",
-    "log003",
-    "log004",
-    "log005",
-    "log008",
-    "manager",
-    "SALE001",
-    "Support",
-    "Workflow",
-    "ZIA002"
-  ];
   int sapid = 0;
   List<TransType> transTypeList;
 
@@ -109,6 +95,7 @@ class _SapBackRightState extends State<SapBackRight> {
                   (Map<String, List<int>> selectDeSelectMap) {});
         });
   }
+
   DateTime todate = DateTime.now();
   DateTime date = DateTime.now();
 
@@ -282,6 +269,7 @@ class _SapBackRightState extends State<SapBackRight> {
   @override
   initState() {
     super.initState();
+    this.getSWData();
   }
 
   bool _validate = false;
@@ -336,16 +324,15 @@ class _SapBackRightState extends State<SapBackRight> {
                               padding: const EdgeInsets.all(4),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField<String>(
-                                  items: getSAPUsersData
-                                      .map((String dropDownStringItem) {
+                                  items: data.map((item) {
                                     return DropdownMenuItem<String>(
-                                      value: dropDownStringItem,
-                                      child: Text(dropDownStringItem),
+                                      value: item,
+                                      child: Text(item),
                                     );
                                   }).toList(),
                                   onChanged: (String newValueSelected) {
                                     setState(() {
-                                      this.selecteduserId = newValueSelected;
+                                      _mySelection = newValueSelected;
                                     });
                                   },
                                   validator: (String value) {
@@ -354,7 +341,7 @@ class _SapBackRightState extends State<SapBackRight> {
                                     }
                                     return null;
                                   },
-                                  value: selecteduserId,
+                                  value: _mySelection,
                                   hint: Text(
                                     'Select User',
                                     style: TextStyle(
@@ -582,7 +569,7 @@ class _SapBackRightState extends State<SapBackRight> {
                                       PostSap newSapRightsPermission =
                                           new PostSap(
                                               sapid: 0,
-                                              userId: selecteduserId,
+                                              userId: _mySelection,
                                               transType: selectedTransTypes,
                                               fromDate: date.toString(),
                                               toDate: todate.toString(),
