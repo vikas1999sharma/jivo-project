@@ -118,13 +118,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
-  flutter_multiselect:
-    dependency: "direct dev"
-    description:
-      name: flutter_multiselect
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -191,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  multiselect_formfield:
+    dependency: "direct dev"
+    description:
+      name: multiselect_formfield
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   package_info:
     dependency: transitive
     description:
